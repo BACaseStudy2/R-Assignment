@@ -1,0 +1,215 @@
+---
+title: "Assignment - 1 : R Programming"
+output: pdf_document
+Author : Team 08
+date: "2023-02-04"
+editor_options: 
+  chunk_output_type: console
+---
+**Team Number: 08 **
+
+* Ashwin Bezliel Mathew (101415428)
+* Zeel Malaviya (101420088)
+* Aditya Anupam Shukla (101421678)
+* Areeba Zubair (101455510)
+* Jasleen Kaur Arora(101412147)
+* Ishita Saha (101396418)
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## DATASET
+
+The Data set Choose for the analysis is Employee data set named "Employee_Data"
+
+To import and view the data set 
+
+```{r}
+library(tidyverse)
+library(readxl)
+Employee_data <- read_excel("Employee_data.xlsx")
+View(Employee_data)
+
+```
+
+## ANALYSIS
+
+**1) Print the structure of your dataset**
+
+  Ans: To print the Structure of the data set 
+
+```{r}
+str(Employee_data)
+```
+
+**2) List the variables in your dataset**
+  
+  Ans:
+```{r}
+colnames(Employee_data)
+```
+
+**3) Print the top 15 rows of your dataset **
+
+  Ans:
+```{r}
+head(Employee_data,15)
+```
+
+**4) Write a user defined function using any of the variables from the data set**
+
+  Ans: We created a function to calculate average age
+
+```{r}
+calculate_average_Age <- function(Age) 
+  {
+   mean(Age)
+  }
+
+average_Age <- calculate_average_Age(Employee_data$Age)
+average_Age
+```
+**5) Use data manipulation techniques and filter rows based on any logical criteria that exist in**
+
+  Ans: We are filtering out Employees with high bounus i.e. 40% or above
+
+```{r}
+library(dplyr)
+High_Bonus <- filter(Employee_data,`Bonus %`> .39)
+High_Bonus
+```
+
+**6) Identify the dependent & independent variables and use reshaping techniques and create a new data frame by joining those variables from your dataset.**
+
+  Ans: Identify the dependent & independent variables. Let's say, dependent variable is Annual Salary and independent variables are Age and Bonus %
+
+```{r}
+dep_var <- Employee_data$`Annual Salary`
+indep_vars <- Employee_data[c("Age", "Bonus %")] 
+indep_vars
+```
+**7)  Create a new data frame by joining dependent and independent variables**
+
+  Ans
+```{r}
+Employee_data_new <- cbind(dep_var, indep_vars)
+head(Employee_data_new,5)
+```
+
+**8) Remove missing values in your dataset.**
+
+  Ans:
+```{r}
+
+Employee_data_new_clean <- Employee_data_new[complete.cases(Employee_data_new),]
+
+```
+
+**9) Identify and remove duplicated data in your dataset**
+
+  Ans:
+```{r}
+Employee_data_new_clean <- unique(Employee_data_new_clean)
+
+```
+
+**10) Reorder multiple rows in descending order**
+
+  Ans:
+```{r}
+Employee_data_new_clean %>% head(15,) %>%arrange(desc(Age))
+
+
+```
+**11) Rename some of the column names in your dataset**
+
+  Ans:
+```{r}
+colnames(Employee_data_new_clean) <- c("Annual_Salary", "Age", "Bonus_Percentage")
+
+```
+
+**12) Add new variables in your data frame by using a mathematical function (for e.g. – multiply an existing column by 2 and add it as a new variable to your data frame)**
+
+  Ans:
+```{r}
+Employee_data_new_clean$Double_Annual_Salary <- 2 * Employee_data_new_clean$Annual_Salary
+str(Employee_data_new_clean)
+```
+**13) Create a training set using random number generator engine.**
+
+  Ans:
+
+```{r}
+set.seed(123)
+training_set_index <- sample(1:nrow(Employee_data_new_clean), 0.8 * nrow(Employee_data_new_clean))
+training_set <- Employee_data_new_clean[training_set_index, ]
+```
+**14) Print the summary statistics of your dataset**
+
+  Ans:
+```{r}
+summary(Employee_data_new_clean)
+```
+**15) Use any of the numerical variables from the dataset and perform the following statistical functions**
+• Mean
+• Median
+• Mode
+• Range
+
+
+  Ans:
+
+### Mean
+```{r}
+mean(Employee_data_new_clean$Annual_Salary)
+```
+
+### Median
+```{r}
+median(Employee_data_new_clean$Annual_Salary)
+```
+
+### Mode
+```{r}
+mode(Employee_data_new_clean$Annual_Salary)
+```
+
+### Range
+```{r}
+range(Employee_data_new_clean$Annual_Salary)
+```
+
+**16) Plot a scatter plot for any 2 variables in your dataset**
+
+  Ans:
+```{r}
+
+ggplot(Employee_data_new_clean, aes(x = Age, y = Annual_Salary)) + 
+  geom_point() + 
+  ggtitle("Scatter Plot of Age and Annual Salary")
+
+```
+
+**17) Plot a bar plot for any 2 variables in your dataset**
+
+  Ans:
+
+```{r}
+ggplot(Employee_data_new_clean, aes(x = Age, fill = Annual_Salary)) + 
+  geom_bar(position = "dodge") + 
+  ggtitle("Bar Plot of Age and Annual Salary") + scale_color_brewer(palette="Accent")
+
+```
+**18) Find the correlation between any 2 variables by applying least square linear regression model**
+
+  Ans:
+
+```{r}
+model <- lm(Annual_Salary ~ Age, data = Employee_data_new_clean)
+summary(model)
+
+```
+
